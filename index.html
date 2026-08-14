@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sharma Designs</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f8fc;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 22px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 80px 7%;
+      text-align: center;
+      background: white;
+    }
+
+    .hero h1 {
+      font-size: 45px;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 span {
+      color: #2563eb;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: auto;
+      color: #6b7280;
+      font-size: 18px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 25px;
+      background: #2563eb;
+      color: white;
+      padding: 13px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    section {
+      padding: 60px 7%;
+      text-align: center;
+    }
+
+    section h2 {
+      font-size: 32px;
+      margin-bottom: 30px;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2563eb;
+      margin-top: 12px;
+    }
+
+    .about {
+      background: #eef2ff;
+    }
+
+    .contact {
+      background: #111827;
+      color: white;
+    }
+
+    .contact p {
+      margin-bottom: 15px;
+    }
+
+    footer {
+      background: #0b1120;
+      color: #9ca3af;
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 700px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      nav a {
+        margin: 0 6px;
+      }
+
+      .hero h1 {
+        font-size: 35px;
+      }
+
+      .services {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">Sharma Designs</div>
+
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Creative Designs for <span>Your Business</span></h1>
+
+    <p>
+      Professional and creative logo, poster, template and marketing
+      designs for businesses, entrepreneurs, brands and individuals.
+    </p>
+
+    <a class="button" href="#contact">Get Your Design</a>
+  </section>
+
+  <section id="services">
+    <h2>Our Services</h2>
+
+    <div class="services">
+
+      <div class="card">
+        <h3>Logo Design</h3>
+        <p>Creative and professional logos designed for your brand.</p>
+        <div class="price">₹50</div>
+      </div>
+
+      <div class="card">
+        <h3>Social Media Templates</h3>
+        <p>Eye-catching designs for Instagram, Facebook and more.</p>
+        <div class="price">₹50</div>
+      </div>
+
+      <div class="card">
+        <h3>Promotional Posters</h3>
+        <p>Professional promotional creatives for your business.</p>
+        <div class="price">₹50</div>
+      </div>
+
+      <div class="card">
+        <h3>Custom Designs</h3>
+        <p>Have a specific idea? We can create a design according to your needs.</p>
+        <div class="price">₹50+</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <h2>Why Choose Sharma Designs?</h2>
+
+    <p>
+      We create clean, creative and professional designs that help
+      businesses and individuals build a strong visual identity.
+      Our goal is to provide quality designs at affordable prices.
+    </p>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Let's Create Something Great</h2>
+
+    <p>Need a logo, poster or custom template?</p>
+    <p>Contact us and tell us what you need.</p>
+
+    <a class="button" href="https://wa.me/91XXXXXXXXXX">
+      Order on WhatsApp
+    </a>
+  </section>
+
+  <footer>
+    © 2026 Sharma Designs. All Rights Reserved.
+  </footer>
+
+</body>
+</html>
