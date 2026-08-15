@@ -111,10 +111,50 @@ section h2 {
 }
 
 .card {
-  background: white;
+  background: linear-gradient(145deg, #ffffff, #f7f4ee);
+  border: 1px solid #e7dfd2;
+  border-radius: 18px;
   padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+  box-shadow: 0 10px 30px rgba(55, 45, 35, 0.08);
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #b08d57, #e6d3a3, #b08d57);
+}
+
+.card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 18px 40px rgba(55, 45, 35, 0.14);
+  border-color: #c9ad7a;
+}
+
+.card h3 {
+  color: #211d19;
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.card p {
+  color: #6b6258;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.card .price {
+  color: #9a773f;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 15px;
 }
 
 .card h3 {
