@@ -1,233 +1,367 @@
-<!DOCTYPE html>
+
+
+     <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sharma Designs</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<title>Sharma Designs | Creative Design Studio</title>
 
-    body {
-      background: #f7f8fc;
-      color: #1f2937;
-      line-height: 1.6;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-    header {
-      background: #111827;
-      color: white;
-      padding: 22px 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+body {
+  background: #f7f8fc;
+  color: #1f2937;
+  line-height: 1.6;
+}
 
-    .logo {
-      font-size: 25px;
-      font-weight: bold;
-    }
+header {
+  background: #111827;
+  color: white;
+  padding: 20px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin-left: 20px;
-      font-size: 14px;
-    }
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
 
-    .hero {
-      padding: 80px 7%;
-      text-align: center;
-      background: white;
-    }
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 18px;
+  font-size: 14px;
+}
 
-    .hero h1 {
-      font-size: 45px;
-      margin-bottom: 15px;
-    }
+.hero {
+  padding: 85px 7%;
+  text-align: center;
+  background: white;
+}
 
-    .hero h1 span {
-      color: #2563eb;
-    }
+.hero h1 {
+  font-size: 45px;
+  margin-bottom: 18px;
+}
 
-    .hero p {
-      max-width: 700px;
-      margin: auto;
-      color: #6b7280;
-      font-size: 18px;
-    }
+.hero h1 span {
+  color: #2563eb;
+}
 
-    .button {
-      display: inline-block;
-      margin-top: 25px;
-      background: #2563eb;
-      color: white;
-      padding: 13px 25px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-    }
+.hero p {
+  max-width: 720px;
+  margin: auto;
+  color: #6b7280;
+  font-size: 18px;
+}
 
-    section {
-      padding: 60px 7%;
-      text-align: center;
-    }
+.button {
+  display: inline-block;
+  margin-top: 25px;
+  background: #2563eb;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
 
-    section h2 {
-      font-size: 32px;
-      margin-bottom: 30px;
-    }
+section {
+  padding: 65px 7%;
+  text-align: center;
+}
 
-    .services {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-    }
+section h2 {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
 
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.07);
-    }
+.section-text {
+  color: #6b7280;
+  margin-bottom: 35px;
+}
 
-    .card h3 {
-      margin-bottom: 10px;
-    }
+.services,
+.portfolio {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
 
-    .price {
-      font-size: 22px;
-      font-weight: bold;
-      color: #2563eb;
-      margin-top: 12px;
-    }
+.card {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+}
 
-    .about {
-      background: #eef2ff;
-    }
+.card h3 {
+  margin: 14px 0 8px;
+}
 
-    .contact {
-      background: #111827;
-      color: white;
-    }
+.card p {
+  color: #6b7280;
+  font-size: 14px;
+}
 
-    .contact p {
-      margin-bottom: 15px;
-    }
+.price {
+  color: #2563eb;
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 12px;
+}
 
-    footer {
-      background: #0b1120;
-      color: #9ca3af;
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-    }
+.portfolio {
+  grid-template-columns: repeat(2, 1fr);
+}
 
-    @media (max-width: 700px) {
-      header {
-        flex-direction: column;
-        gap: 12px;
-      }
+.portfolio .card {
+  padding: 12px;
+  overflow: hidden;
+}
 
-      nav a {
-        margin: 0 6px;
-      }
+.portfolio img {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+}
 
-      .hero h1 {
-        font-size: 35px;
-      }
+.portfolio h3 {
+  margin-top: 15px;
+}
 
-      .services {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+.about {
+  background: #eef2ff;
+}
+
+.about p {
+  max-width: 800px;
+  margin: auto;
+  color: #4b5563;
+}
+
+.contact {
+  background: #111827;
+  color: white;
+}
+
+.contact p {
+  color: #d1d5db;
+  margin-bottom: 8px;
+}
+
+.contact .button {
+  background: #25d366;
+}
+
+footer {
+  background: #0b1120;
+  color: #9ca3af;
+  text-align: center;
+  padding: 22px;
+  font-size: 14px;
+}
+
+@media (max-width: 750px) {
+
+  header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  nav a {
+    margin: 0 7px;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .services {
+    grid-template-columns: 1fr;
+  }
+
+  .portfolio {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="logo">Sharma Designs</div>
+<header>
+  <div class="logo">Sharma Designs</div>
 
-    <nav>
-      <a href="#services">Services</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+  <nav>
+    <a href="#services">Services</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-  <section class="hero">
-    <h1>Creative Designs for <span>Your Business</span></h1>
 
-    <p>
-      Professional and creative logo, poster, template and marketing
-      designs for businesses, entrepreneurs, brands and individuals.
-    </p>
+<section class="hero">
 
-    <a class="button" href="#contact">Get Your Design</a>
-  </section>
+  <h1>Creative Designs for <span>Your Business</span></h1>
 
-  <section id="services">
-    <h2>Our Services</h2>
+  <p>
+    Professional and creative logo, poster, template and marketing
+    designs for businesses, entrepreneurs, brands and individuals.
+  </p>
 
-    <div class="services">
+  <a class="button" href="#portfolio">View Our Work</a>
 
-      <div class="card">
-        <h3>Logo Design</h3>
-        <p>Creative and professional logos designed for your brand.</p>
-        <div class="price">₹50</div>
-      </div>
+</section>
 
-      <div class="card">
-        <h3>Social Media Templates</h3>
-        <p>Eye-catching designs for Instagram, Facebook and more.</p>
-        <div class="price">₹50</div>
-      </div>
 
-      <div class="card">
-        <h3>Promotional Posters</h3>
-        <p>Professional promotional creatives for your business.</p>
-        <div class="price">₹50</div>
-      </div>
+<section id="services">
 
-      <div class="card">
-        <h3>Custom Designs</h3>
-        <p>Have a specific idea? We can create a design according to your needs.</p>
-        <div class="price">₹50+</div>
-      </div>
+  <h2>Our Services</h2>
 
+  <p class="section-text">
+    Professional designs to help your brand stand out.
+  </p>
+
+  <div class="services">
+
+    <div class="card">
+      <h3>Logo Design</h3>
+      <p>Creative and professional logos designed for your brand.</p>
+      <div class="price">₹50</div>
     </div>
-  </section>
 
-  <section class="about" id="about">
-    <h2>Why Choose Sharma Designs?</h2>
+    <div class="card">
+      <h3>Social Media Templates</h3>
+      <p>Eye-catching designs for Instagram, Facebook and other platforms.</p>
+      <div class="price">₹50</div>
+    </div>
 
-    <p>
-      We create clean, creative and professional designs that help
-      businesses and individuals build a strong visual identity.
-      Our goal is to provide quality designs at affordable prices.
-    </p>
-  </section>
+    <div class="card">
+      <h3>Promotional Posters</h3>
+      <p>Professional promotional creatives for your business.</p>
+      <div class="price">₹50</div>
+    </div>
 
-  <section id="contact" class="contact">
-    <h2>Let's Create Something Great</h2>
+    <div class="card">
+      <h3>Custom Designs</h3>
+      <p>Custom designs created according to your requirements.</p>
+      <div class="price">₹50+</div>
+    </div>
 
-    <p>Need a logo, poster or custom template?</p>
-    <p>Contact us and tell us what you need.</p>
+  </div>
 
-    <a class="button" href="https://wa.me/91XXXXXXXXXX">
-      Order on WhatsApp
-    </a>
-  </section>
+</section>
 
-  <footer>
-    © 2026 Sharma Designs. All Rights Reserved.
-  </footer>
+
+<section id="portfolio">
+
+  <h2>Our Portfolio</h2>
+
+  <p class="section-text">
+    Explore some of our recent creative designs.
+  </p>
+
+  <div class="portfolio">
+
+    <div class="card">
+      <img src="IMG-20260518-WA0015.jpg" alt="Jewellery Design">
+      <h3>Jewellery Design</h3>
+      <p>Elegant promotional design for jewellery businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="IMG-20260601-WA0000.jpg" alt="Solar Products Advertisement">
+      <h3>Solar Products Advertisement</h3>
+      <p>Professional promotional creative for solar businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="IMG-20260601-WA0003.jpg" alt="Solar Plant Template">
+      <h3>Solar Plant Template</h3>
+      <p>Creative marketing template for solar businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="file_0000000011f88211a1141f0d00867a5c.png" alt="Solar System Design">
+      <h3>Solar System Design</h3>
+      <p>Professional creative for solar energy businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="file_0000000060e47207974556662954a4f5.png" alt="Jewellery Template">
+      <h3>Jewellery Template</h3>
+      <p>Premium promotional design for jewellery brands.</p>
+    </div>
+
+    <div class="card">
+      <img src="file_00000000675082118461e60edbdda576.png" alt="Jewellery Promotional Design">
+      <h3>Jewellery Promotional Design</h3>
+      <p>Elegant creative design for jewellery businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="file_000000006f6c82119b388290de7d8122.png" alt="Clothing Store Template">
+      <h3>Clothing Store Template</h3>
+      <p>Modern social media design for fashion businesses.</p>
+    </div>
+
+    <div class="card">
+      <img src="file_00000000fc788211b7a55f35039980a9.png" alt="Restaurant Template">
+      <h3>Restaurant Template</h3>
+      <p>Attractive promotional design for restaurants.</p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="about" id="about">
+
+  <h2>Why Choose Sharma Designs?</h2>
+
+  <p>
+    We provide professional and creative design solutions for businesses,
+    entrepreneurs, brands and individuals. From custom logos and social
+    media templates to promotional posters and marketing creatives,
+    we create eye-catching designs that help your brand stand out.
+  </p>
+
+</section>
+
+
+<section id="contact" class="contact">
+
+  <h2>Let's Create Something Great</h2>
+
+  <p>Need a logo, poster or custom template?</p>
+  <p>Contact us and tell us what you need.</p>
+
+  <a class="button" href="https://wa.me/8360761583">
+    Order on WhatsApp
+  </a>
+
+</section>
+
+
+<footer>
+  © 2026 Sharma Designs. All Rights Reserved.
+</footer>
 
 </body>
 </html>
