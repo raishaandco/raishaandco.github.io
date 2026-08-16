@@ -219,16 +219,19 @@ section h2 {
 
 .portfolio img {
   width: 100%;
-  height: auto;
+  height: 300px;
+  object-fit: cover;
+  object-position: top;
   display: block;
   border-radius: 14px;
   box-shadow: 0 8px 25px rgba(55, 45, 35, 0.10);
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
+
 .portfolio img:hover {
   transform: scale(1.02);
   box-shadow: 0 14px 35px rgba(55, 45, 35, 0.16);
-     }
+}
 
 .portfolio h3 {
   margin-top: 15px;
