@@ -1,56 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Lumi - Haunted Paper School</title>
 
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
-    <title>Lumi Catch Game</title>
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#111;
+  font-family:Arial,sans-serif;
+}
 
-    <style>
+#gameCanvas{
+  display:block;
+  width:100vw;
+  height:100vh;
+  background:#17151d;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+#hud{
+  position:fixed;
+  top:12px;
+  left:12px;
+  right:12px;
+  display:flex;
+  justify-content:space-between;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  z-index:5;
+  text-shadow:2px 2px #000;
+}
 
-        html,
-        body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #fff8e7;
-            font-family: Arial, sans-serif;
-        }
+#message{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  background:rgba(10,10,15,.92);
+  color:white;
+  z-index:10;
+  padding:25px;
+}
 
-        #gameCanvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            background:
-                linear-gradient(
-                    to bottom,
-                    #fffdf5,
-                    #f4e8c8
-                );
-        }
+.panel{
+  max-width:360px;
+}
 
-    </style>
+h1{
+  font-size:32px;
+  margin-bottom:12px;
+}
+
+p{
+  line-height:1.5;
+  margin-bottom:20px;
+}
+
+button{
+  border:3px solid white;
+  background:#f7ead0;
+  color:#17151d;
+  padding:13px 24px;
+  border-radius:14px;
+  font-size:18px;
+  font-weight:bold;
+}
+
+#controls{
+  position:fixed;
+  bottom:20px;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  z-index:6;
+}
+
+.control{
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  border:3px solid white;
+  background:rgba(255,255,255,.2);
+  color:white;
+  font-size:27px;
+  touch-action:none;
+}
+</style>
 </head>
 
 <body>
 
-    <canvas id="gameCanvas"></canvas>
+<canvas id="gameCanvas"></canvas>
 
-    <!-- Game JavaScript -->
-    <script src="game.js"></script>
+<div id="hud">
+  <span>⭐ <b id="score">0</b></span>
+  <span>🔑 <b id="keys">0</b>/3</span>
+  <span>❤️ <b id="lives">3</b></span>
+</div>
+
+<div id="message">
+  <div class="panel">
+    <h1>📖 Lumi's Haunted School</h1>
+
+    <p>
+      Lumi is trapped inside the old paper school.
+      Find 3 keys 🔑, avoid the paper ghosts 👻
+      and reach the exit door 🚪!
+    </p>
+
+    <button onclick="startGame()">START LEVEL 1</button>
+  </div>
+</div>
+
+<div id="controls">
+  <button class="control" id="left">◀</button>
+  <button class="control" id="up">▲</button>
+  <button class="control" id="down">▼</button>
+  <button class="control" id="right">▶</button>
+</div>
+
+<script src="game.js"></script>
 
 </body>
-
 </html>
