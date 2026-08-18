@@ -1,329 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumi Catch Game</title>
+    <meta charset="UTF-8">
 
-<style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
 
-body {
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #f7f0dc;
-  touch-action: none;
-}
+    <title>Lumi Catch Game</title>
 
-#game {
-  width: 100vw;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(#fffdf4, #e9dfc4);
-}
+    <style>
 
-/* Score */
-#top {
-  position: absolute;
-  top: 15px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  font-size: 19px;
-  font-weight: bold;
-  z-index: 10;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Lumi */
-#lumi {
-  position: absolute;
-  bottom: 35px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 75px;
-  height: 95px;
-  background: #fffdf5;
-  border: 3px solid #222;
-  border-radius: 20px 20px 12px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 38px;
-  box-shadow: 4px 5px 0 #222;
-}
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #fff8e7;
+            font-family: Arial, sans-serif;
+        }
 
-/* Falling objects */
-.item {
-  position: absolute;
-  top: -60px;
-  font-size: 42px;
-  user-select: none;
-}
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            background:
+                linear-gradient(
+                    to bottom,
+                    #fffdf5,
+                    #f4e8c8
+                );
+        }
 
-/* Start & Game Over */
-#startScreen,
-#gameOver {
-  position: absolute;
-  inset: 0;
-  background: rgba(255,253,244,0.96);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  z-index: 20;
-}
-
-#gameOver {
-  display: none;
-}
-
-h1 {
-  font-size: 40px;
-  margin-bottom: 12px;
-}
-
-p {
-  font-size: 18px;
-  margin-bottom: 22px;
-}
-
-button {
-  padding: 13px 28px;
-  border: 3px solid #222;
-  border-radius: 15px;
-  background: white;
-  font-size: 19px;
-  font-weight: bold;
-  box-shadow: 4px 4px 0 #222;
-}
-
-button:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 #222;
-}
-</style>
+    </style>
 </head>
 
 <body>
 
-<div id="game">
+    <canvas id="gameCanvas"></canvas>
 
-  <div id="top">
-    <div>⭐ Score: <span id="score">0</span></div>
-    <div>❤️ Lives: <span id="lives">3</span></div>
-  </div>
-
-  <div id="lumi">🌸</div>
-
-  <div id="startScreen">
-    <h1>📖 Lumi Catch!</h1>
-    <p>Move Lumi and catch the falling objects!</p>
-    <button onclick="startGame()">START GAME</button>
-  </div>
-
-  <div id="gameOver">
-    <h1>Game Over 😭</h1>
-    <p>Your Score: <span id="finalScore">0</span></p>
-    <button onclick="startGame()">PLAY AGAIN</button>
-  </div>
-
-</div>
-
-<script>
-
-const game = document.getElementById("game");
-const lumi = document.getElementById("lumi");
-
-let score = 0;
-let lives = 3;
-let gameRunning = false;
-let spawnTimer;
-let gameLoop;
-
-const items = ["⭐", "🌸", "🍓", "🍎", "💎"];
-
-function startGame() {
-
-  score = 0;
-  lives = 3;
-  gameRunning = true;
-
-  document.getElementById("score").textContent = score;
-  document.getElementById("lives").textContent = lives;
-
-  document.getElementById("startScreen").style.display = "none";
-  document.getElementById("gameOver").style.display = "none";
-
-  document.querySelectorAll(".item").forEach(item => item.remove());
-
-  clearInterval(spawnTimer);
-  cancelAnimationFrame(gameLoop);
-
-  spawnTimer = setInterval(createItem, 700);
-
-  updateGame();
-}
-
-function createItem() {
-
-  if (!gameRunning) return;
-
-  const item = document.createElement("div");
-
-  item.className = "item";
-  item.textContent =
-    items[Math.floor(Math.random() * items.length)];
-
-  const maxX = window.innerWidth - 50;
-
-  item.style.left =
-    Math.random() * maxX + "px";
-
-  item.style.top = "-60px";
-
-  game.appendChild(item);
-}
-
-function updateGame() {
-
-  if (!gameRunning) return;
-
-  const itemList =
-    document.querySelectorAll(".item");
-
-  itemList.forEach(item => {
-
-    let top =
-      parseFloat(item.style.top);
-
-    top += 4;
-
-    item.style.top =
-      top + "px";
-
-    const itemRect =
-      item.getBoundingClientRect();
-
-    const lumiRect =
-      lumi.getBoundingClientRect();
-
-    /* Catch */
-    if (
-      itemRect.bottom >= lumiRect.top &&
-      itemRect.left < lumiRect.right &&
-      itemRect.right > lumiRect.left
-    ) {
-
-      score++;
-
-      document.getElementById("score")
-        .textContent = score;
-
-      item.remove();
-
-    }
-
-    /* Miss */
-    else if (
-      top > window.innerHeight
-    ) {
-
-      lives--;
-
-      document.getElementById("lives")
-        .textContent = lives;
-
-      item.remove();
-
-      if (lives <= 0) {
-        endGame();
-      }
-    }
-
-  });
-
-  gameLoop =
-    requestAnimationFrame(updateGame);
-}
-
-function endGame() {
-
-  gameRunning = false;
-
-  clearInterval(spawnTimer);
-  cancelAnimationFrame(gameLoop);
-
-  document.getElementById("finalScore")
-    .textContent = score;
-
-  document.getElementById("gameOver")
-    .style.display = "flex";
-}
-
-/* Mobile movement */
-function moveLumi(x) {
-
-  const half =
-    lumi.offsetWidth / 2;
-
-  let newX = x - half;
-
-  if (newX < 0) {
-    newX = 0;
-  }
-
-  if (
-    newX >
-    window.innerWidth -
-    lumi.offsetWidth
-  ) {
-    newX =
-      window.innerWidth -
-      lumi.offsetWidth;
-  }
-
-  lumi.style.left =
-    newX + "px";
-
-  lumi.style.transform = "none";
-}
-
-/* Touch */
-game.addEventListener(
-  "touchmove",
-  function(e) {
-
-    if (!gameRunning) return;
-
-    moveLumi(
-      e.touches[0].clientX
-    );
-
-  }
-);
-
-/* Computer mouse */
-game.addEventListener(
-  "mousemove",
-  function(e) {
-
-    if (!gameRunning) return;
-
-    if (e.buttons === 1) {
-      moveLumi(e.clientX);
-    }
-
-  }
-);
-
-</script>
+    <!-- Game JavaScript -->
+    <script src="game.js"></script>
 
 </body>
+
 </html>
