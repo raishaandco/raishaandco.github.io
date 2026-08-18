@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumi Runner</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    touch-action: manipulation;
+}
+
+body {
+    background: #111;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(#87ceeb 0%, #dff6ff 45%, #777 45%, #333 100%);
+}
+
+/* Sky */
+#sky {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 46%;
+    background: linear-gradient(#63c5ff, #dff7ff);
+}
+
+/* Road */
+#road {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    background: #383838;
+    transform: perspective(500px) rotateX(15deg);
+    transform-origin: bottom;
+}
+
+/* Lane lines */
+.lane-line {
+    position: absolute;
+    bottom: 0;
+    width: 8px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        white 0px,
+        white 45px,
+        transparent 45px,
+        transparent 90px
+    );
+    opacity: 0.6;
+}
+
+.line1 {
+    left: 33.33%;
+}
+
+.line2 {
+    left: 66.66%;
+}
+
+/* Score */
+#score {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 20;
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Coins */
+#coinCount {
+    position: absolute;
+    top: 55px;
+    left: 20px;
+    color: #ffd700;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 20;
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Lumi */
+#lumi {
+    position: absolute;
+    width: 105px;
+    height: 135px;
+    object-fit: contain;
+    bottom: 105px;
+    left: calc(50% - 52px);
+    z-index: 10;
+    transition: left 0.15s;
+}
+
+/* Jump */
+.jump {
+    animation: jump 0.65s ease-out;
+}
+
+@keyframes jump {
+    0% {
+        bottom: 105px;
+    }
+
+    50% {
+        bottom: 270px;
+    }
+
+    100% {
+        bottom: 105px;
+    }
+}
+
+/* Obstacles */
+.obstacle {
+    position: absolute;
+    width: 65px;
+    height: 65px;
+    background: #e53935;
+    border-radius: 10px;
+    border: 5px solid #8b0000;
+    z-index: 8;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.4);
+}
+
+/* Coins */
+.coin {
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff176, #ffc400);
+    border: 4px solid #ff9800;
+    z-index: 7;
+    box-shadow: 0 0 12px #ffd700;
+}
+
+/* Start screen */
+#startScreen,
+#gameOverScreen {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+#gameOverScreen {
+    display: none;
+}
+
+h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+button {
+    border: none;
+    padding: 14px 30px;
+    border-radius: 30px;
+    background: #ffca28;
+    color: #222;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* Mobile controls */
+#controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    z-index: 30;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+    pointer-events: none;
+}
+
+.control-group {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.control {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.45);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    user-select: none;
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 38px;
+    }
+
+    #lumi {
+        width: 90px;
+        height: 120px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="game">
+
+    <div id="sky"></div>
+
+    <div id="road">
+        <div class="lane-line line1"></div>
+        <div class="lane-line line2"></div>
+    </div>
+
+    <div id="score">Score: 0</div>
+    <div id="coinCount">🪙 Coins: 0</div>
+
+    <!-- Lumi -->
+    <img
+        id="lumi"
+        src="Screenshot_2026-08-18-23-38-44-237_com.openai.chatgpt-edit.jpg"
+        alt="Lumi"
+    >
+
+    <div id="controls">
+        <div class="control-group">
+            <div class="control" id="leftBtn">⬅️</div>
+            <div class="control" id="rightBtn">➡️</div>
+        </div>
+
+        <div class="control-group">
+            <div class="control" id="jumpBtn">⬆️</div>
+        </div>
+    </div>
+
+    <!-- Start -->
+    <div id="startScreen">
+        <h1>🏃‍♀️ Lumi Runner</h1>
+        <p>Run • Jump • Collect Coins!</p>
+        <button id="startBtn">START GAME</button>
+    </div>
+
+    <!-- Game Over -->
+    <div id="gameOverScreen">
+        <h1>💥 Game Over</h1>
+        <p id="finalScore">Score: 0</p>
+        <button id="restartBtn">PLAY AGAIN</button>
+    </div>
+
+</div>
+
+<script>
+
+const game = document.getElementById("game");
+const lumi = document.getElementById("lumi");
+const scoreText = document.getElementById("score");
+const coinText = document.getElementById("coinCount");
+
+const startScreen = document.getElementById("startScreen");
+const gameOverScreen = document.getElementById("gameOverScreen");
+const finalScore = document.getElementById("finalScore");
+
+const startBtn = document.getElementById("startBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+let lane = 1;
+let score = 0;
+let coins = 0;
+let speed = 6;
+let gameRunning = false;
+let obstacleTimer;
+let coinTimer;
+let scoreTimer;
+
+const lanes = [16.66, 50, 83.33];
+
+function moveLumi() {
+    lumi.style.left = `calc(${lanes[lane]}% - 52px)`;
+}
+
+function moveLeft() {
+    if (!gameRunning) return;
+
+    if (lane > 0) {
+        lane--;
+        moveLumi();
+    }
+}
+
+function moveRight() {
+    if (!gameRunning) return;
+
+    if (lane < 2) {
+        lane++;
+        moveLumi();
+    }
+}
+
+function jump() {
+    if (!gameRunning) return;
+
+    if (!lumi.classList.contains("jump")) {
+        lumi.classList.add("jump");
+
+        setTimeout(() => {
+            lumi.classList.remove("jump");
+        }, 650);
+    }
+}
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") {
+        moveLeft();
+    }
+
+    if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
+        moveRight();
+    }
+
+    if (e.key === "ArrowUp" || e.key === " ") {
+        jump();
+    }
+
+});
+
+/* Mobile buttons */
+
+document.getElementById("leftBtn").addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    moveLeft();
+});
+
+document.getElementById("rightBtn").addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    moveRight();
+});
+
+document.getElementById("jumpBtn").addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    jump();
+});
+
+/* Also allow clicking */
+
+document.getElementById("leftBtn").onclick = moveLeft;
+document.getElementById("rightBtn").onclick = moveRight;
+document.getElementById("jumpBtn").onclick = jump;
+
+
+/* Create obstacle */
+
+function createObstacle() {
+
+    if (!gameRunning) return;
+
+    const obstacle = document.createElement("div");
+
+    obstacle.classList.add("obstacle");
+
+    const randomLane = Math.floor(Math.random() * 3);
+
+    obstacle.dataset.lane = randomLane;
+
+    obstacle.style.left = `calc(${lanes[randomLane]}% - 32px)`;
+    obstacle.style.top = "-80px";
+
+    game.appendChild(obstacle);
+
+    let position = -80;
+
+    const move = setInterval(() => {
+
+        if (!gameRunning) {
+            clearInterval(move);
+            obstacle.remove();
+            return;
+        }
+
+        position += speed;
+
+        obstacle.style.top = position + "px";
+
+        const lumiRect = lumi.getBoundingClientRect();
+        const obstacleRect = obstacle.getBoundingClientRect();
+
+        const sameLane = Number(obstacle.dataset.lane) === lane;
+
+        const jumping =
+            lumi.classList.contains("jump");
+
+        if (
+            sameLane &&
+            !jumping &&
+            lumiRect.bottom > obstacleRect.top + 15 &&
+            lumiRect.top < obstacleRect.bottom &&
+            lumiRect.right > obstacleRect.left &&
+            lumiRect.left < obstacleRect.right
+        ) {
+
+            clearInterval(move);
+            endGame();
+        }
+
+        if (position > window.innerHeight) {
+            clearInterval(move);
+            obstacle.remove();
+        }
+
+    }, 30);
+}
+
+
+/* Create coin */
+
+function createCoin() {
+
+    if (!gameRunning) return;
+
+    const coin = document.createElement("div");
+
+    coin.classList.add("coin");
+
+    const randomLane = Math.floor(Math.random() * 3);
+
+    coin.dataset.lane = randomLane;
+
+    coin.style.left = `calc(${lanes[randomLane]}% - 17px)`;
+    coin.style.top = "-50px";
+
+    game.appendChild(coin);
+
+    let position = -50;
+
+    const move = setInterval(() => {
+
+        if (!gameRunning) {
+            clearInterval(move);
+            coin.remove();
+            return;
+        }
+
+        position += speed;
+
+        coin.style.top = position + "px";
+
+        const lumiRect = lumi.getBoundingClientRect();
+        const coinRect = coin.getBoundingClientRect();
+
+        const sameLane = Number(coin.dataset.lane) === lane;
+
+        if (
+            sameLane &&
+            lumiRect.bottom > coinRect.top &&
+            lumiRect.top < coinRect.bottom &&
+            lumiRect.right > coinRect.left &&
+            lumiRect.left < coinRect.right
+        ) {
+
+            coins++;
+
+            coinText.textContent = "🪙 Coins: " + coins;
+
+            clearInterval(move);
+            coin.remove();
+        }
+
+        if (position > window.innerHeight) {
+            clearInterval(move);
+            coin.remove();
+        }
+
+    }, 30);
+}
+
+
+/* Start Game */
+
+function startGame() {
+
+    score = 0;
+    coins = 0;
+    lane = 1;
+    speed = 6;
+
+    scoreText.textContent = "Score: 0";
+    coinText.textContent = "🪙 Coins: 0";
+
+    gameRunning = true;
+
+    startScreen.style.display = "none";
+    gameOverScreen.style.display = "none";
+
+    moveLumi();
+
+    obstacleTimer = setInterval(createObstacle, 1400);
+    coinTimer = setInterval(createCoin, 900);
+
+    scoreTimer = setInterval(() => {
+
+        score++;
+
+        scoreText.textContent = "Score: " + score;
+
+        if (score % 100 === 0) {
+            speed += 0.5;
+        }
+
+    }, 100);
+}
+
+
+/* Game Over */
+
+function endGame() {
+
+    gameRunning = false;
+
+    clearInterval(obstacleTimer);
+    clearInterval(coinTimer);
+    clearInterval(scoreTimer);
+
+    finalScore.textContent =
+        "Score: " + score + " | 🪙 Coins: " + coins;
+
+    gameOverScreen.style.display = "flex";
+}
+
+
+startBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", startGame);
+
+</script>
+
+</body>
+</html>
