@@ -1,265 +1,573 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let W, H;
+
+function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+}
+
+resize();
+window.addEventListener("resize", resize);
+
+let gameRunning = false;
 
 let score = 0;
 let lives = 3;
-let gameRunning = true;
+let collectedKeys = 0;
 
 const player = {
-    x: canvas.width / 2 - 35,
-    y: canvas.height - 120,
-    width: 70,
-    height: 80,
-    speed: 8
+    x: 70,
+    y: 100,
+    size: 48,
+    speed: 4
 };
 
-const objects = [];
-const emojis = ["⭐", "🌸", "🍓", "💎", "🍎"];
+const keys = [
+    {x: 170, y: 180, collected:false},
+    {x: 330, y: 430, collected:false},
+    {x: 650, y: 170, collected:false}
+];
 
-let leftPressed = false;
-let rightPressed = false;
+const ghosts = [
+    {x: 480, y: 250, size:42, speed:1.1},
+    {x: 720, y: 430, size:42, speed:1.3}
+];
 
-// Keyboard controls
-document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowLeft") {
-        leftPressed = true;
-    }
+const exitDoor = {
+    x: 0,
+    y: 0,
+    width:70,
+    height:100
+};
 
-    if (event.key === "ArrowRight") {
-        rightPressed = true;
-    }
-});
+let direction = {
+    left:false,
+    right:false,
+    up:false,
+    down:false
+};
 
-document.addEventListener("keyup", function(event) {
-    if (event.key === "ArrowLeft") {
-        leftPressed = false;
-    }
+function startGame(){
 
-    if (event.key === "ArrowRight") {
-        rightPressed = false;
-    }
-});
+    score = 0;
+    lives = 3;
+    collectedKeys = 0;
 
-// Mobile touch controls
-canvas.addEventListener("touchmove", function(event) {
+    player.x = 70;
+    player.y = 100;
 
-    event.preventDefault();
+    keys.forEach(k => k.collected = false);
 
-    const touch = event.touches[0];
+    document.getElementById("score").textContent = score;
+    document.getElementById("keys").textContent = collectedKeys;
+    document.getElementById("lives").textContent = lives;
 
-    player.x = touch.clientX - player.width / 2;
+    document.getElementById("message").style.display = "none";
 
-    if (player.x < 0) {
-        player.x = 0;
-    }
-
-    if (player.x + player.width > canvas.width) {
-        player.x = canvas.width - player.width;
-    }
-
-}, { passive: false });
-
-function createObject() {
-
-    objects.push({
-        x: Math.random() * (canvas.width - 40),
-        y: -40,
-        size: 40,
-        speed: 3 + Math.random() * 3,
-        emoji: emojis[Math.floor(Math.random() * emojis.length)]
-    });
+    gameRunning = true;
 }
 
-function drawPlayer() {
+function drawBackground(){
 
-    ctx.font = "55px Arial";
-    ctx.textAlign = "center";
+    ctx.fillStyle = "#17151d";
+    ctx.fillRect(0,0,W,H);
+
+    /* paper floor */
+
+    ctx.fillStyle = "#25212b";
+    ctx.fillRect(20,70,W-40,H-120);
+
+    /* paper tiles */
+
+    ctx.strokeStyle = "#3c3542";
+    ctx.lineWidth = 2;
+
+    for(let x=20;x<W-40;x+=70){
+        ctx.beginPath();
+        ctx.moveTo(x,70);
+        ctx.lineTo(x,H-50);
+        ctx.stroke();
+    }
+
+    for(let y=70;y<H-50;y+=70){
+        ctx.beginPath();
+        ctx.moveTo(20,y);
+        ctx.lineTo(W-20,y);
+        ctx.stroke();
+    }
+
+    /* school windows */
+
+    for(let x=80;x<W;x+=190){
+
+        ctx.fillStyle="#10131c";
+        ctx.fillRect(x,85,70,55);
+
+        ctx.strokeStyle="#d8c99c";
+        ctx.strokeRect(x,85,70,55);
+
+        ctx.beginPath();
+        ctx.moveTo(x+35,85);
+        ctx.lineTo(x+35,140);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(x,112);
+        ctx.lineTo(x+70,112);
+        ctx.stroke();
+    }
+
+    /* exit */
+
+    exitDoor.x = W-90;
+    exitDoor.y = H-170;
+
+    ctx.fillStyle = collectedKeys >= 3 ? "#6f9b72" : "#553e48";
+
+    ctx.fillRect(
+        exitDoor.x,
+        exitDoor.y,
+        exitDoor.width,
+        exitDoor.height
+    );
+
+    ctx.strokeStyle="#eee2bd";
+    ctx.lineWidth=4;
+
+    ctx.strokeRect(
+        exitDoor.x,
+        exitDoor.y,
+        exitDoor.width,
+        exitDoor.height
+    );
+
+    ctx.font="28px Arial";
+    ctx.textAlign="center";
 
     ctx.fillText(
-        "🌸",
-        player.x + player.width / 2,
-        player.y + 55
+        collectedKeys >= 3 ? "🚪" : "🔒",
+        exitDoor.x+35,
+        exitDoor.y+58
+    );
+
+    ctx.font="12px Arial";
+    ctx.fillStyle="white";
+
+    ctx.fillText(
+        collectedKeys >= 3 ? "EXIT" : "LOCKED",
+        exitDoor.x+35,
+        exitDoor.y+82
     );
 }
 
-function drawObjects() {
+function drawLumi(){
 
-    objects.forEach(function(object) {
+    const x = player.x;
+    const y = player.y;
 
-        ctx.font = object.size + "px Arial";
-        ctx.textAlign = "center";
+    /*
+      Paper Lumi:
+      paper head + paper hair + paper dress
+    */
 
-        ctx.fillText(
-            object.emoji,
-            object.x,
-            object.y
+    /* shadow */
+
+    ctx.fillStyle="rgba(0,0,0,.4)";
+    ctx.beginPath();
+    ctx.ellipse(
+        x+24,
+        y+49,
+        25,
+        8,
+        0,
+        0,
+        Math.PI*2
+    );
+    ctx.fill();
+
+    /* paper dress */
+
+    ctx.fillStyle="#f8f1dc";
+    ctx.strokeStyle="#302b31";
+    ctx.lineWidth=3;
+
+    ctx.beginPath();
+    ctx.moveTo(x+10,y+26);
+    ctx.lineTo(x+38,y+26);
+    ctx.lineTo(x+46,y+55);
+    ctx.lineTo(x+2,y+55);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    /* paper head */
+
+    ctx.fillStyle="#fffaf0";
+
+    ctx.beginPath();
+    ctx.arc(
+        x+24,
+        y+19,
+        17,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+    ctx.stroke();
+
+    /* paper hair */
+
+    ctx.fillStyle="#d8c4a4";
+
+    ctx.beginPath();
+    ctx.arc(
+        x+24,
+        y+10,
+        18,
+        Math.PI,
+        Math.PI*2
+    );
+
+    ctx.fill();
+    ctx.stroke();
+
+    /* notebook-paper hat */
+
+    ctx.fillStyle="#fffdf5";
+
+    ctx.beginPath();
+    ctx.moveTo(x+5,y+1);
+    ctx.lineTo(x+42,y+1);
+    ctx.lineTo(x+37,y-9);
+    ctx.lineTo(x+9,y-9);
+    ctx.closePath();
+
+    ctx.fill();
+    ctx.stroke();
+
+    /* face */
+
+    ctx.fillStyle="#222";
+
+    ctx.beginPath();
+    ctx.arc(x+18,y+19,2,0,Math.PI*2);
+    ctx.arc(x+30,y+19,2,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(
+        x+24,
+        y+25,
+        5,
+        0,
+        Math.PI
+    );
+
+    ctx.stroke();
+
+    /* paper lines */
+
+    ctx.strokeStyle="#c9bda5";
+    ctx.lineWidth=1;
+
+    for(let i=0;i<3;i++){
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            x+8,
+            y+34+i*6
         );
 
+        ctx.lineTo(
+            x+39,
+            y+34+i*6
+        );
+
+        ctx.stroke();
+    }
+}
+
+function drawKeys(){
+
+    keys.forEach(key=>{
+
+        if(key.collected) return;
+
+        ctx.font="32px Arial";
+        ctx.textAlign="center";
+
+        ctx.fillText(
+            "🔑",
+            key.x,
+            key.y
+        );
     });
 }
 
-function updatePlayer() {
+function drawGhosts(){
 
-    if (leftPressed) {
-        player.x -= player.speed;
-    }
+    ghosts.forEach(ghost=>{
 
-    if (rightPressed) {
-        player.x += player.speed;
-    }
+        ctx.font=ghost.size+"px Arial";
+        ctx.textAlign="center";
 
-    if (player.x < 0) {
-        player.x = 0;
-    }
-
-    if (player.x + player.width > canvas.width) {
-        player.x = canvas.width - player.width;
-    }
+        ctx.fillText(
+            "👻",
+            ghost.x,
+            ghost.y
+        );
+    });
 }
 
-function updateObjects() {
+function distance(a,b){
 
-    for (let i = objects.length - 1; i >= 0; i--) {
+    return Math.sqrt(
+        Math.pow(a.x-b.x,2)+
+        Math.pow(a.y-b.y,2)
+    );
+}
 
-        const object = objects[i];
+function updatePlayer(){
 
-        object.y += object.speed;
+    if(direction.left)
+        player.x -= player.speed;
 
-        // Collision
-        if (
-            object.x > player.x &&
-            object.x < player.x + player.width &&
-            object.y > player.y &&
-            object.y < player.y + player.height
-        ) {
+    if(direction.right)
+        player.x += player.speed;
 
-            score++;
+    if(direction.up)
+        player.y -= player.speed;
 
-            objects.splice(i, 1);
+    if(direction.down)
+        player.y += player.speed;
 
-            continue;
+    player.x = Math.max(
+        30,
+        Math.min(
+            W-70,
+            player.x
+        )
+    );
+
+    player.y = Math.max(
+        100,
+        Math.min(
+            H-130,
+            player.y
+        )
+    );
+}
+
+function updateKeys(){
+
+    keys.forEach(key=>{
+
+        if(key.collected) return;
+
+        const d = distance(
+            {
+                x:player.x+24,
+                y:player.y+25
+            },
+            key
+        );
+
+        if(d < 45){
+
+            key.collected = true;
+            collectedKeys++;
+            score += 100;
+
+            document.getElementById("keys")
+                .textContent = collectedKeys;
+
+            document.getElementById("score")
+                .textContent = score;
+        }
+    });
+}
+
+function updateGhosts(){
+
+    ghosts.forEach(ghost=>{
+
+        const dx =
+            player.x - ghost.x;
+
+        const dy =
+            player.y - ghost.y;
+
+        const d =
+            Math.sqrt(dx*dx+dy*dy);
+
+        if(d > 1){
+
+            ghost.x +=
+                (dx/d) *
+                ghost.speed;
+
+            ghost.y +=
+                (dy/d) *
+                ghost.speed;
         }
 
-        // Object missed
-        if (object.y > canvas.height + 50) {
+        if(d < 42){
 
             lives--;
 
-            objects.splice(i, 1);
+            document.getElementById("lives")
+                .textContent = lives;
 
-            if (lives <= 0) {
-                gameRunning = false;
+            player.x = 70;
+            player.y = 100;
+
+            if(lives <= 0){
+                gameOver();
             }
         }
+    });
+}
+
+function checkExit(){
+
+    if(collectedKeys < 3) return;
+
+    if(
+        player.x < exitDoor.x + exitDoor.width &&
+        player.x + player.size > exitDoor.x &&
+        player.y < exitDoor.y + exitDoor.height &&
+        player.y + player.size > exitDoor.y
+    ){
+
+        gameRunning = false;
+
+        document.getElementById("message")
+            .style.display = "flex";
+
+        document.querySelector("#message .panel")
+            .innerHTML = `
+                <h1>🎉 Level Complete!</h1>
+                <p>
+                Lumi escaped the haunted paper school!<br>
+                ⭐ Score: ${score}
+                </p>
+                <button onclick="startGame()">
+                PLAY AGAIN
+                </button>
+            `;
     }
 }
 
-function drawUI() {
+function gameOver(){
 
-    ctx.fillStyle = "#222";
-    ctx.font = "bold 20px Arial";
-    ctx.textAlign = "left";
+    gameRunning = false;
 
-    ctx.fillText(
-        "⭐ Score: " + score,
-        15,
-        35
-    );
+    document.getElementById("message")
+        .style.display = "flex";
 
-    ctx.textAlign = "right";
-
-    ctx.fillText(
-        "❤️ Lives: " + lives,
-        canvas.width - 15,
-        35
-    );
+    document.querySelector("#message .panel")
+        .innerHTML = `
+            <h1>👻 Game Over!</h1>
+            <p>
+            The paper ghosts caught Lumi!<br>
+            ⭐ Score: ${score}
+            </p>
+            <button onclick="startGame()">
+            TRY AGAIN
+            </button>
+        `;
 }
 
-function drawGameOver() {
-
-    ctx.fillStyle = "rgba(255,255,255,0.95)";
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    ctx.fillStyle = "#222";
-    ctx.textAlign = "center";
-
-    ctx.font = "bold 42px Arial";
-
-    ctx.fillText(
-        "Game Over!",
-        canvas.width / 2,
-        canvas.height / 2 - 40
-    );
-
-    ctx.font = "24px Arial";
-
-    ctx.fillText(
-        "Score: " + score,
-        canvas.width / 2,
-        canvas.height / 2 + 10
-    );
-
-    ctx.font = "20px Arial";
-
-    ctx.fillText(
-        "Refresh the page to play again",
-        canvas.width / 2,
-        canvas.height / 2 + 55
-    );
-}
-
-function gameLoop() {
+function gameLoop(){
 
     ctx.clearRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        W,
+        H
     );
 
-    if (gameRunning) {
+    drawBackground();
+
+    if(gameRunning){
 
         updatePlayer();
-        updateObjects();
+        updateKeys();
+        updateGhosts();
 
-        drawPlayer();
-        drawObjects();
-        drawUI();
+        drawKeys();
+        drawGhosts();
+        drawLumi();
 
-        requestAnimationFrame(gameLoop);
-
-    } else {
-
-        drawGameOver();
+        checkExit();
     }
+
+    requestAnimationFrame(gameLoop);
 }
 
-// Create falling objects
-setInterval(function() {
+/* Touch buttons */
 
-    if (gameRunning) {
-        createObject();
-    }
+function holdButton(id, key){
 
-}, 700);
+    const button =
+        document.getElementById(id);
 
-// Start game
-gameLoop();
+    button.addEventListener(
+        "touchstart",
+        e=>{
+            e.preventDefault();
+            direction[key]=true;
+        }
+    );
 
-// Resize screen
-window.addEventListener("resize", function() {
+    button.addEventListener(
+        "touchend",
+        e=>{
+            e.preventDefault();
+            direction[key]=false;
+        }
+    );
+}
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+holdButton("left","left");
+holdButton("right","right");
+holdButton("up","up");
+holdButton("down","down");
 
-    player.y = canvas.height - 120;
+/* Keyboard */
 
+document.addEventListener("keydown",e=>{
+
+    if(e.key==="ArrowLeft")
+        direction.left=true;
+
+    if(e.key==="ArrowRight")
+        direction.right=true;
+
+    if(e.key==="ArrowUp")
+        direction.up=true;
+
+    if(e.key==="ArrowDown")
+        direction.down=true;
 });
+
+document.addEventListener("keyup",e=>{
+
+    if(e.key==="ArrowLeft")
+        direction.left=false;
+
+    if(e.key==="ArrowRight")
+        direction.right=false;
+
+    if(e.key==="ArrowUp")
+        direction.up=false;
+
+    if(e.key==="ArrowDown")
+        direction.down=false;
+});
+
+gameLoop();
